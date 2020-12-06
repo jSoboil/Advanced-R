@@ -59,13 +59,67 @@ z <- c(abc = 1, def = 2)
 z[c("a", "d")]
 
 # Subsetting for Lists ----------------------------------------------------
+# Subsetting a list works the same way for subsetting an atomic vector. Using [] will always
+# return a list; [[]] and $ let you pull out components of the list.
 
+# You can subset higher-dimensional structures in three ways:
+# 1. with multiple vectors;
+# 2. with a single vector; and
+# 3. with a matrix.
 
+# The most common way of subsetting matrices (2d) and arrays (>2d) is a simple generalisation of 1d
+# subsetting; you supply a 1d index for each dimension, separated by a comma. Blank subsetting is 
+# now useful because it lets you keep all rows and columns
+a <- matrix(1:9, nrow = 3)
+colnames(a) <- c("A", "B", "C")
+a[1:2, ]
+a[c(TRUE, FALSE, TRUE), c("B", "A")]
+a[0, -2]
 
+# By default, [] will simplify the results to the lowest possible dimensionality. You can avoid
+# this, but this will be taught in a later section.
 
+# Because matrices and arrays are implemented as vectors with special attributes, you can subset
+# them using a single vector. If you do it, they will behave like a vector. Arrays in R are stored
+# in column-major order:
+(vals <- outer(1:5, 1:5, FUN = "paste", sep = ","))
+vals[c(4, 15)] # i.e., ith row x jth column, such as 4 x 1 and 5 x 3
 
+# You can also subset higher-dimensional data structures with an integer matrix (or, if named, 
+# a character matrix).  Each row in the matrix specifies the location of one value, where each 
+# column corresponds to a dimension in the array being subsetted. This means that you use a 2 
+# column matrix to subset a matrix, a 3 column matrix to subset a 3d array, and so on. The result
+# is a vector of values:
+vals <- outer(1:5, 1:5, FUN = "paste", sep = ",")
+select <- matrix(ncol = 2, byrow = TRUE, c(
+ 1, 1,
+ 3, 1,
+ 2, 4
+))
+vals[select]
 
+# Subsetting for data frames ----------------------------------------------
+# Data frames possess the characteristics of both lists and matrices: if you subset with a single
+# vector, they behave like lists; if you subset with two vectors, they behave like matrices.
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 
+df[df$x == 2, ]
+df[c(1, 3), ]
+
+# There are also two ways to select columns from a data frame:
+# 1. Like a list
+df[c("x", "z")]
+# 2. Like a matrix
+df[, c("x", "z")]
+
+# There's an important difference if you select a single column: matrix subsetting simplifies by 
+# default, list subsetting does not.
+str(df["x"])
+str(df[, "x"])
+
+# ===========================================================================================
+# Subsetting operators ----------------------------------------------------
+# ===========================================================================================
 
 
 
