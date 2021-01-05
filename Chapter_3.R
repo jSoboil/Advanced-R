@@ -120,6 +120,84 @@ str(df[, "x"])
 # ===========================================================================================
 # Subsetting operators ----------------------------------------------------
 # ===========================================================================================
+# There are two subsetting operators: [[ and $. [[ is similar to [, though it only returns a single
+# value and allows you to pull pieces out a list. $ is a useful shorthand for [[ combined with 
+# character subsetting.
+
+# You need [[ when working with lists. This is because when [ is applied to a list it always 
+# returns a list: it never gives you the contents.
+a <- list(a = 1, b = 2)
+a[[1]]
+a[["a"]]
+
+# If you do supply a vector it indexes recursively:
+b <- list(a = list(b = list(c = list(d = 1))))
+b[[c("a", "b", "c", "d")]]
+# ... which is the same as 
+b[["a"]][["b"]][["c"]][["d"]]
+
+# Because data frames are lists of columns, you can use [[ to extract a column from dataframes.
+
+# Simplifying vs. preserving subsetting -----------------------------------
+# Simplifying subsets returns the simplest possible data structure that can represent the output.
+# Preserving keeps the structure of the object, and is generally better for programming because the
+# result will always be the same type.
+
+# I am generally familiar with these behaviours and so will not go further.
+
+# ===========================================================================================
+# Applications ------------------------------------------------------------
+# ===========================================================================================
+
+# Lookup Tables (character subsetting) ------------------------------------
+# Character matching provides a powerful way to make lookup tables. Say you want to convert 
+# abbreviations:
+x <- c("m", "f", "u", "f", "f", "m", "m")
+lookup <- c(m = "Male", f = "Female", u = NA)
+lookup[x]
+unname(lookup[x])
+# or with fewer output values...
+c(m = "Known", f = "Known", u = "Unknown")[x]
+
+# If you don't want names in the result, use unname() to remove them.
+
+# Matching and Merging by hand --------------------------------------------
+# You may have a more complicated lookup table which has multiple columns of info. Suppose we have 
+# a vector of integer grades, and a table that describes their properties.
+grades <- c(1, 2, 2, 3, 1)
+info <- data.frame(
+ grade = 3:1,
+ desc = c("Excellent", "Good", "Poor"),
+ fail = c(FALSE, FALSE, TRUE)
+)
+
+# Say we want to duplicate the info table so that we have a row for each value in grades. We can do
+# this in two ways, either using match() and integer subsetting, or rownames() and character 
+# subsetting:
+grades
+# Using match:
+id <- match(grades, info$grade)
+info[id, ]
+# Using rownames:
+rownames(info) <- info$grade
+info[as.character(grades), ]
+
+# If you have multiple columns to match on,  you'll need to first collapse them to a single column.
+
+# Random samples/bootstrap -------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
