@@ -185,20 +185,123 @@ info[as.character(grades), ]
 # If you have multiple columns to match on,  you'll need to first collapse them to a single column.
 
 # Random samples/bootstrap -------------------------------------------------
+# You can use integer indices to perform random sampling or bootstrapping of a vector or dataframe.
+# sample() generates a vector of indices, then subsetting to access the values:
+df <- data.frame(x = rep(1:3, each = 2), y = 6:1, z = letters[1:6]) 
 
+# Random reorder:
+df[sample(nrow(df)), ]
+# Select 3 random rows:
+df[sample(nrow(df), size = 3), ]
+# Select 6 bootstrap replicates:
+df[sample(nrow(df), size = 6, replace = TRUE), ]
 
+# Ordering (integer subsetting) -------------------------------------------
+# order() takes a vector as an input and returns an integer vector describing how the subsetted 
+# vector should be ordered:
+x <- c("b", "c", "a")
+order(x)
+x[order(x)]
 
+# To break ties, you supply additional variables to order(), and you can change from ascending to 
+# descending order using the argument decreasing = TRUE. By default, any NAs will be put at the end 
+# of the vector; you can remove them with na.last = NA or put at the front with na.last = FALSE.
 
+# For > 2 dimensions, order() and integer subsetting makes it easy to order either the rows or 
+# columns of an object:
 
+# Randomly reorder dataframe...
+df_2 <- df[sample(nrow(df)), 3:1]
+df_2
+df[order(df_2$x), ]
+df_2[, order(names(df_2))]
 
+# Note that more concise yet less flexible functions are available for sorting vectors, such as 
+# sort(), and for dataframes plyr::arrange().
 
+# Expanding aggregated counts (integer subsetting) ------------------------
+# Sometimes you get a dataframe where identical rows have been collapsed into one and a count column
+# has been added. rep() and integer subsetting make ti easy to uncollapse the data by subsetting 
+# with a repeated row index:
+df <- data.frame(x = c(2, 4, 1), y = c(9, 11, 6), n = c(3, 5, 1))
+rep(1:nrow(df), df$n)
+df[rep(1:nrow(df), df$n), ]
 
+# Removing columns from data frames (character subsetting) ----------------
+# There are two ways to remove columsn from a dataframe. You can set individual columns to NULL.
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df$z <- NULL
 
+# Or you can subset to return only the columns you want
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df[c("x", "y")]
 
+# If you know the columns you dont want, use set operations to work out which columns to keep
+df[setdiff(x = names(df), y = "z")]
 
+# Selecting rows based on a condition (logical subsetting) ----------------
+# Because it allows you to easily combine conditions from multiple columns, logical subsetting is 
+# probably the most commonly used technique for extracting rows out of a dataframe.
+mtcars[mtcars$gear == 5, ]
+mtcars[mtcars$gear == 5 & mtcars$cyl == 4, ]
 
+# Remember to use vector boolean operators & and |, not the short-circuiting scalar operators && 
+# and || which are more useful inside if statements. 
 
+# subset() is a specialised shorthand function for subsetting dataframes, and saves some typing 
+# because you don't need to repeat the name of the dataframe:
+subset(x = mtcars, subset = gear == 5 & cyl == 4)
 
+# Boolean algebra vs logical sets (logical and integer subsetting) --------
+# Using set operations are often more useful when:
 
+#  - you want to find the first or last TRUE;
+#  - you have very few TRUEs and very many FALSEs; a set representation may be faster and require 
+#    less storage.
 
+# which() allows you to convert a boolean algebra representation to an integer representation. 
+# There's no reverse option in base R, but we can easily create one:
+x <- sample(10) < 4
+which(x)
 
+unwhich <- function(x, n) {
+ out <- rep_len(FALSE, n)
+ out[x] <- TRUE
+ out
+}
+unwhich(which(x), 10)
+
+# Let's create two logical vectors and their integer equivalents and then explore the relationship 
+# between boolean and set operations:
+(x_1 <- 1:10 %% 2 == 0)
+(x_2 <- which(x_1))
+(y_1 <- 1:10 %% 5 == 0)
+(y_2 <- which(y_1))
+
+# X & Y <-> intersect(x, y)
+x_1 & y_1
+intersect(x_2, y_2)
+
+# X | Y <-> union(x, y)
+x_1 | y_1
+union(x_2, y_2)
+
+# X & !Y <-> setdiff(x, y)
+x_1 & !y_1
+setdiff(x_2, y_2)
+
+# xor(X, Y) <-> setdiff(union(x, y), intersect(x, y))
+xor(x_1, y_1)
+setdiff(union(x_2, y_2), intersect(x_2, y_2))
+
+# When first learning subsetting, a common mistake is to use x[which(y)] instead of simply x[y]. 
+# Here the which() achieves nothing: it switches from logical to integer subsetting but the result
+# will be exactly the same. Also beware that x[-which(y)] is *not* equivalent to x[!y]: if y is all
+# FALSE, which(y) will be integer(0) and -integer(0) is still integer(0)! So, you'll get no values,
+# instead of all values. In general, avoid switching from logical to integer subsetting  - unless 
+# you want, for example. the first or last TRUE value.
+
+# I do not complete the exercise for this chapter as I am relatively well versed in this type of 
+# stuff.
+
+# End file ----------------------------------------------------------------
