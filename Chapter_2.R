@@ -12,9 +12,7 @@
 # Given an object, the best way to understand what data structures it’s composed of is to use
 # str(). 
 
-# ==========================================================================================
 # Vectors -----------------------------------------------------------------
-# ==========================================================================================
 # The basic data structure in R is the vector. Vectors come in two flavours: atomic vectors 
 # and lists. They have three common properties:
 
@@ -29,7 +27,7 @@
 # object is a vector with no attributes apart from names. Use is.atomic(x) || is.list(x) to 
 # test if an object is actually a vector.
 
-# Atomic Vectors ----------------------------------------------------------
+## Atomic Vectors ----------------------------------------------------------
 # There are four common types of atomic vectors: logical, integer, double (often called 
 # numeric), and character.
 
@@ -95,9 +93,7 @@ mean(x)
 # message if the coercion might lose information. If confusion is likely, explicitly coerce 
 # with as.character(), as.double(), as.integer(), or as.logical().
 
-# ==========================================================================================
 # Lists -------------------------------------------------------------------
-# ==========================================================================================
 # Lists are different from atomic vectors because their elements can be of any type, including
 # lists. You construct lists by using list() instead of c():
 x <- list(1:3, "a", c(TRUE, FALSE< TRUE), c(2.3, 5.9))
@@ -126,9 +122,7 @@ is.list(mtcars)
 mod <- lm(mpg ~ wt, data = mtcars)
 is.list(mod)
 
-# ==========================================================================================
 # Attributes --------------------------------------------------------------
-# ==========================================================================================
 # All objects can have arbitrary additional attributes, used to store meta-data about the 
 # object. Attributes can be thought of as a named list (with unique names). Attributes can be 
 # accessed individually with attr() or all at once (as a list) with attributes().
@@ -155,9 +149,7 @@ attributes(sum(y))
 # working with these attributes, use names(x), class(x), and dim(x), NOT attr(x, "names"), 
 # attr(x, "class"), and attr(x, "dim").
 
-# ==========================================================================================
 # Names -------------------------------------------------------------------
-# ==========================================================================================
 # You can name a vector in three ways:
 
 # 1. When creating it
@@ -183,9 +175,7 @@ names(z)
 # You can create a new vector without names using unname(x), or remove names in place with 
 # names(x) <- NULL.
 
-# ==========================================================================================
 # Factors -----------------------------------------------------------------
-# ==========================================================================================
 # One important use of attributes is to define factors. A factor is a vector that can contain
 # only predefined values, and is used to store categorical data. Factors are built on top of
 # integer vectors using two attributes: the class(), “factor”, which makes them behave 
@@ -239,9 +229,7 @@ table(sex_factor)
 # versions of R, there was a memory advantage to using factors instead of character vectors, 
 # but this is no longer the case.
 
-# ==========================================================================================
 # Data frames -------------------------------------------------------------
-# ==========================================================================================
 # A data frame is the most common way of storing data in R, and if used systematically makes 
 # data analysis easier.
 
@@ -277,7 +265,7 @@ is.data.frame(df)
 # length;
 # and a matrix will create a data frame with the same number of columns and rows.
 
-# Combining data frames ---------------------------------------------------
+## Combining data frames ---------------------------------------------------
 # You can combine data frames using cbind() and rbind():
 
 cbind(df, data.frame(z = 1:3))
@@ -301,7 +289,7 @@ str(good)
 # The conversion rules for cbind() are complicated and best avoided by ensuring all inputs 
 # are of the same type.
 
-# Special columns ---------------------------------------------------------
+## Special columns ---------------------------------------------------------
 # Since a data frame is a list of vectors, it is possible for a data frame to have a column 
 # that is a list:
 df <- data.frame(x = 1:3)
