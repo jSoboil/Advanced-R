@@ -1,6 +1,4 @@
-# ===========================================================================================
 # Subsetting --------------------------------------------------------------
-# ===========================================================================================
 # R's subsetting features are powerful and fast. Mastery of subsetting allows you to succinctly
 # express complex operations. Subsetting is hard to learn because you need to learn a number of
 # interrelated concepts:
@@ -14,7 +12,7 @@
 # Subsetting is a natural complememt to str(). str() shows you the structure of an object, and
 # subsetting allows you to pull out the pieces that you are interested in.
 
-# Subsetting for atomic vectors -------------------------------------------
+## Subsetting for atomic vectors -------------------------------------------
 # Let's explore different types of subsetting with a simple vector:
 x <- c(2.1, 4.2, 3.3, 5.4)
 
@@ -58,7 +56,7 @@ y[c("a", "a", "a")]
 z <- c(abc = 1, def = 2)
 z[c("a", "d")]
 
-# Subsetting for Lists ----------------------------------------------------
+## Subsetting for Lists ----------------------------------------------------
 # Subsetting a list works the same way for subsetting an atomic vector. Using [] will always
 # return a list; [[]] and $ let you pull out components of the list.
 
@@ -98,7 +96,7 @@ select <- matrix(ncol = 2, byrow = TRUE, c(
 ))
 vals[select]
 
-# Subsetting for data frames ----------------------------------------------
+## Subsetting for data frames ----------------------------------------------
 # Data frames possess the characteristics of both lists and matrices: if you subset with a single
 # vector, they behave like lists; if you subset with two vectors, they behave like matrices.
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
@@ -117,9 +115,7 @@ df[, c("x", "z")]
 str(df["x"])
 str(df[, "x"])
 
-# ===========================================================================================
 # Subsetting operators ----------------------------------------------------
-# ===========================================================================================
 # There are two subsetting operators: [[ and $. [[ is similar to [, though it only returns a single
 # value and allows you to pull pieces out a list. $ is a useful shorthand for [[ combined with 
 # character subsetting.
@@ -138,18 +134,15 @@ b[["a"]][["b"]][["c"]][["d"]]
 
 # Because data frames are lists of columns, you can use [[ to extract a column from dataframes.
 
-# Simplifying vs. preserving subsetting -----------------------------------
+## Simplifying vs. preserving subsetting -----------------------------------
 # Simplifying subsets returns the simplest possible data structure that can represent the output.
 # Preserving keeps the structure of the object, and is generally better for programming because the
 # result will always be the same type.
 
 # I am generally familiar with these behaviours and so will not go further.
 
-# ===========================================================================================
-# Applications ------------------------------------------------------------
-# ===========================================================================================
-
-# Lookup Tables (character subsetting) ------------------------------------
+## Applications ------------------------------------------------------------
+### Lookup Tables (character subsetting) ------------------------------------
 # Character matching provides a powerful way to make lookup tables. Say you want to convert 
 # abbreviations:
 x <- c("m", "f", "u", "f", "f", "m", "m")
@@ -161,7 +154,7 @@ c(m = "Known", f = "Known", u = "Unknown")[x]
 
 # If you don't want names in the result, use unname() to remove them.
 
-# Matching and Merging by hand --------------------------------------------
+## Matching and Merging by hand --------------------------------------------
 # You may have a more complicated lookup table which has multiple columns of info. Suppose we have 
 # a vector of integer grades, and a table that describes their properties.
 grades <- c(1, 2, 2, 3, 1)
@@ -184,7 +177,7 @@ info[as.character(grades), ]
 
 # If you have multiple columns to match on,  you'll need to first collapse them to a single column.
 
-# Random samples/bootstrap -------------------------------------------------
+## Random samples/bootstrap -------------------------------------------------
 # You can use integer indices to perform random sampling or bootstrapping of a vector or dataframe.
 # sample() generates a vector of indices, then subsetting to access the values:
 df <- data.frame(x = rep(1:3, each = 2), y = 6:1, z = letters[1:6]) 
@@ -196,7 +189,7 @@ df[sample(nrow(df), size = 3), ]
 # Select 6 bootstrap replicates:
 df[sample(nrow(df), size = 6, replace = TRUE), ]
 
-# Ordering (integer subsetting) -------------------------------------------
+## Ordering (integer subsetting) -------------------------------------------
 # order() takes a vector as an input and returns an integer vector describing how the subsetted 
 # vector should be ordered:
 x <- c("b", "c", "a")
@@ -219,7 +212,7 @@ df_2[, order(names(df_2))]
 # Note that more concise yet less flexible functions are available for sorting vectors, such as 
 # sort(), and for dataframes plyr::arrange().
 
-# Expanding aggregated counts (integer subsetting) ------------------------
+## Expanding aggregated counts (integer subsetting) ------------------------
 # Sometimes you get a dataframe where identical rows have been collapsed into one and a count column
 # has been added. rep() and integer subsetting make ti easy to uncollapse the data by subsetting 
 # with a repeated row index:
@@ -227,7 +220,7 @@ df <- data.frame(x = c(2, 4, 1), y = c(9, 11, 6), n = c(3, 5, 1))
 rep(1:nrow(df), df$n)
 df[rep(1:nrow(df), df$n), ]
 
-# Removing columns from data frames (character subsetting) ----------------
+## Removing columns from data frames (character subsetting) ----------------
 # There are two ways to remove columsn from a dataframe. You can set individual columns to NULL.
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 df$z <- NULL
@@ -239,7 +232,7 @@ df[c("x", "y")]
 # If you know the columns you dont want, use set operations to work out which columns to keep
 df[setdiff(x = names(df), y = "z")]
 
-# Selecting rows based on a condition (logical subsetting) ----------------
+## Selecting rows based on a condition (logical subsetting) ----------------
 # Because it allows you to easily combine conditions from multiple columns, logical subsetting is 
 # probably the most commonly used technique for extracting rows out of a dataframe.
 mtcars[mtcars$gear == 5, ]
