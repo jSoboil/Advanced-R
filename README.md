@@ -1,7 +1,7 @@
 # Advanced-R:
 Repository for replicated code and exercises from Hadley Wickham's Advanced R textbook.
 
-<img src="img/bookcover.png" width="260" height = "100" align="right" />
+<img src="img/bookcover.png" width="260" height = "200" align="right" />
 <br/>
 
 # Book Overview:
