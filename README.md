@@ -1,6 +1,9 @@
 # Advanced-R:
 Repository for replicated code and exercises from Hadley Wickham's Advanced R textbook.
 
+<img src="img/bookcover.png" width="260" align="right" />
+<br/>
+
 # Book Overview:
 An Essential Reference for Intermediate and Advanced R Programmers, Advanced R presents useful tools and techniques for attacking many types of R programming problems, helping you avoid mistakes and dead ends. With more than ten years of experience programming in R, the author illustrates the elegance, beauty, and flexibility at the heart of R.
 
