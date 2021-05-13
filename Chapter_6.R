@@ -61,13 +61,67 @@ x
 #  dynamic lookup
 
 # Every operation is a function call --------------------------------------
+# Remember in R:
+#  Everything that exists is an object
+#  Everything that happens is a function call
 
+# Main takeaway: use ` ` to refer to an object, and "" or '' to refer to a string...
 
+## Function arguments ------------------------------------------------------
+# The formal arguments of a function are a property of the function, whereas the actual
+# or calling arguments can vary each time you call a function.
 
+### Calling functions -------------------------------------------------------
+# Calling a function given a list of arguments: suppose you had a list of function
+# arguments, such as...
+args <- list(1:10, na.rm = TRUE)
 
+# How could you then send that list to the mean() function? You need to do.call()
+do.call(mean, args)
+# ... this is equivalent to:
+mean(1:10, na.rm = TRUE)
 
+# What about default and missing arguments?
+# Functions in R can have default values...
+f <- function(a = 1 , b = 2) {
+ c(a, b)
+}
+f()
+# Since arguments in R are evaluated lazily, the default value can be defined in terms
+# of other arguments:
+g <- function(a = 1, b = a * 2) {
+ c(a, b)
+}
+g()
+g(10)
+# Default arguments can even be defined in terms of variables created within a 
+# function. This is frequently used in base R functions, but it is arguably bad
+# practice as you will not understand what the defaults values will be unless you 
+# read the source code, for example:
+h <- function(a = 1, b = d) {
+ d <- (a + 1) ^ 2
+ c(a, b)
+}
+h()
+h
 
+# However, you can determine if an argument was supplied or not with the missing()
+# function.
+i <- function(a, b) {
+ c(missing(a), missing(b))
+}
+i()
+i(a = 1)
+i(b = 2)
+i(1, 2)
+# Note: sometimes you may want to add a non-trivial default value, which might take 
+# several lines of code to compute. Instead of inserting that code in the function
+# definition, you could use missing() to conditionally compute it if needed. However,
+# this makes it hard to know which arguments are required and which are optional 
+# without carefully reading the documentation. Instead, it can also be useful to set
+# the default value to NULL and use is.null() to check if the argument was supplied.
 
+## Lazy evaluation ---------------------------------------------------------
 
 
 
