@@ -120,13 +120,3 @@ i(1, 2)
 # this makes it hard to know which arguments are required and which are optional 
 # without carefully reading the documentation. Instead, it can also be useful to set
 # the default value to NULL and use is.null() to check if the argument was supplied.
-
-## Lazy evaluation ---------------------------------------------------------
-
-
-
-
-
-
-
-
