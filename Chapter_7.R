@@ -23,7 +23,7 @@ is.function(f)
 typeof(sum)
 is.primitive(sum)
 
-## S3 ----------------------------------------------------------------------
+# S3 ----------------------------------------------------------------------
 # S3 is R's first and simplest OO system. It is only the OO system used in the base and stats
 # packages, and it is the most commonly used system in the CRAN packages. 
 
@@ -127,5 +127,114 @@ mean(a)
 # the class compatible with the generic. It is therefore up to you to ensure that your 
 # method does not violate the expectations of existing/base code
 
-# Method dispatch ---------------------------------------------------------
+## Method dispatch ---------------------------------------------------------
 # Avoid multiple inheritance and dispatch!!
+
+# Reference classes -------------------------------------------------------
+# Reference classes are the newest OO system in R. They are fundamentally different to S3 
+# and S4 classes because:
+
+# RC methods belong to objects, not functions  
+# RC objects are mutable: the usual R copy-on-modify semantics do not apply
+
+# These properties make RC objects behave more like objects do in most other programming
+# languages, e.g. Python, Ruby, Java, and C#. RCs are implemented in R code: they are a
+# special S4 class that wraps around an environment.
+
+## Defining classes and creating objects -----------------------------------
+# RC objects are best used for describing stateful objects, objects that change over time.
+# Creating an RC object is similar to creating an S4 object, but with setRefClass() instead
+# of setClass(). The first and only required argument is an alphanumeric name. While you
+# can use new() to create new RC objects, it's a good style to use the object returned by
+# setRefClass() to generate new objects. For example:
+account <- setRefClass("account")
+account$new()
+
+# setRefClass() also accepts a list of name-class pairs that define class fields (equivalent
+# to S4 slots). Additional named arguments passed to new() will set initial values of the 
+# fields. You can get and set field values with $:
+account <- setRefClass("account", 
+                       fields = list(balance = "numeric"))
+a <- account$new(balance = 100)
+a$balance
+a$balance <- 200
+a$balance
+
+# Instead of supplying a class name for the field, you can provide a single argument 
+# function which will act as an accessor method. This enables you to add custom behaviour 
+# when getting or setting a field. 
+
+# Note that RC objects are mutable, i.e., they have reference semantics, and are not 
+# copyied-on-modify:
+b <- a
+b$balance
+a$balance <- 0
+b$balance
+
+# For this reason, RC objects come with a copy() method that allow you to make a copy of 
+# the object:
+c <- a$copy()
+c$balance
+a$balance <- 100
+c$balance
+
+# An object is not very useful without some behaviour defined by *methods*. RC methods are
+# associated with a class and can modify its fields in place. As shown below, note that you
+# access the value of fields with their name, and modify them with <<-:
+account <- setRefClass("account",
+ fields = list(balance = "numeric"),
+ methods = list(
+  withdraw = function(x) {
+   balance <<- balance - x
+  },
+  deposit = function(x) {
+   balance <<- balance + x
+  }
+ )
+)
+# You can then call an RC method the same way as you access a field:
+a <- account$new(balance = 100)
+a$deposit(100)
+a$balance
+
+# The final important argument to setRefClass() is *contains*. This is the name of the 
+# parent RC to inherit behaviour from. The following example creates a new type of bank
+# account that returns an error preventing the balance from going below 0:
+no_overdraft <- setRefClass("no_overdraft", 
+                            contains = "account", 
+                            methods = list(
+                             withdraw = function(x){
+                              if (balance < x) {
+                               stop("Not enough money")
+                              } else {
+                               balance <<- balance - x
+                               }
+                              }
+                             )
+                            )
+my_account <- no_overdraft$new(balance = 100)
+my_account$deposit(50)
+my_account$balance
+my_account$withdraw(200)
+
+# All RCs eventually inherit from envRefClass. It provides useful methods like copy(), 
+# callSuper() (to call parent field), field() (to get the value of a field given its name),
+# export() (equivalent to as()), and show() (overidden to control printing).
+
+## Recognising objects and methods -----------------------------------------
+# You can recognise RC objects and methods because they are S4 objects, e.g. isS4() that
+# inherit from "refClass" (is(x, "refClass")). pryr::otype() will return "RC". RC methods
+# are also S4 objects, with class refMethodDef.
+
+## Method dispatch ---------------------------------------------------------
+# Method dispatch is simple in RC because methods are associated with classes, not 
+# functions. When you call x$f(), R will look for a method f in the class of x, then in it's
+# parent, then it's parent's parent, and so on. As noted above, from within a method you 
+# can call the parent method directly with callSuper()
+
+# Picking a system --------------------------------------------------------
+# Simple objects = S3
+# Interrelated, complex objects = S4
+# If mutable states are required = RCs
+
+# End file ----------------------------------------------------------------
