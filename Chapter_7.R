@@ -128,4 +128,4 @@ mean(a)
 # method does not violate the expectations of existing/base code
 
 # Method dispatch ---------------------------------------------------------
-
+# Avoid multiple inheritance and dispatch!!
