@@ -92,4 +92,57 @@ identical(globalenv(), environment())
 globalenv() == environment()
 
 ## Recursing over environments ---------------------------------------------
+# Environments in R form a tree, so it is often convenient to write a recursive 
+# function. Given a name, the function where() finds the envr *where* the name is
+# defined, using R's regular scoping rules:
+x <- 5
+where("x")
+where("mean")
+# The definition of where is straightforward. It has two arguments: the name to look
+# for (as a string), and the envr in which to start the search.
+where <- function(name, envr = parent.frame()) {
+ if (identical(env, emptyenv())) {
+  # Base case
+  stop("Can't find", name, call. = FALSE)
+ } else if (exists(name, envir = env, inherits = FALSE)) {
+  # Success case
+  env
+ } else {
+  # Recursive case
+  where(name, parent.env(env))
+ }
+}
+
+## Function environments ---------------------------------------------------
+# Most new envr are created as a consequence of using functions, not by using 
+# new.env(). There are four types of envrs associated with using functions.
+
+### The enclosing environment -----------------------------------------------
+# When a function is created, it gains a reference to the envr where it was made. 
+# This is the enclosing envr and is used for lexical scoping. You can determine the
+# enclosing envr of a function by calling environment() with a function as its first
+# argument:
+y <- 1
+f <- function(x) {
+ x + y
+}
+environment(f)
+
+### Binding environments ----------------------------------------------------
+# The binding envrs of a function are all the envrs which have a binding to it. 
+# I.e., all the other objects associated with it. The binding envr determines how
+# we find the function; in contrast, the enclosing envr determines how the function
+# finds values.
+
+# This distinction is NB for package namespaces. Package namespaces keep packages 
+# independent. For example, if package A uses the base mean() function, what happens
+# if package B creates its own mean() function? Namespaces ensure that package A 
+# continues to use the base mean() function, and that package A is not affected by 
+# package B (unless specified).
+
+# Namespaces are implemented using envrs, taking advantage of the fact that functions
+# don't have to live in their enclosing envrs.
+
+### Execution environments --------------------------------------------------
+
 
