@@ -143,6 +143,4 @@ environment(f)
 # Namespaces are implemented using envrs, taking advantage of the fact that functions
 # don't have to live in their enclosing envrs.
 
-### Execution environments --------------------------------------------------
-
-
+# End file ----------------------------------------------------------------
