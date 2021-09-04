@@ -77,3 +77,42 @@ summary(df_1)
 # the simplest FP tool, the anonymous function.
 
 ## Anonymous functions -----------------------------------------------------
+# R doesn't have special syntax for creating a named function: when you create a 
+# function, you use the regular assignment operator <- to give it a name. However,
+# if you choose not give the function a name, you get an *anonymous function*
+
+# You should only use anon functions when it is not worth it to give it a name:
+lapply(mtcars, function(x) length(unique(x)))
+Filter(function(x) !is.numeric(x), mtcars)
+integrate(function(x) sin(x) ^ 2, 0, pi)
+
+# Like all functions in R, anon functions have formals(), a body(), and a parent
+# environment()
+
+## Closures ----------------------------------------------------------------
+# Simply speaking, closures are functions written by functions, and are named as
+# such because they enclose the envr of the parent function and can access all 
+# of its variables.
+
+# The following e.g., uses this idea to generate a family of power functions
+# in which a parent function creates two child functions:
+power <- function(exponent) {
+ function(x) {
+  x ^ exponent
+ }
+}
+
+square <- power(2)
+square(2)
+square(4)
+
+cube <- power(3)
+cube(2)
+cube(4)
+
+# When you print a closure, it does not give useful info. So, a good practice is
+# to use pryr:unenclose:
+pryr::unenclose(square)
+pryr::unenclose(cube)
+
+# End file ----------------------------------------------------------------
