@@ -20,3 +20,51 @@ randomise(sum)
 # then one can focus on speed.
 
 ## My first functional: lapply() -------------------------------------------
+# The simplest functional is lapply(). lapply() takes a function, applies it to
+# each element in a list, and returns the results in the form of a list. Although
+# lapply() is written in C for performance, we can create a simple R 
+# implementation that does the same thing:
+lapply2 <- function(x, f, ...) {
+ out <- vector("list", length(x))
+ for (i in seq_along(x)) {
+  out[[i]] <- f(x[[i]], ...)
+ }
+
+  out
+
+}
+# From the above code, one can see that lapply() is a wrapper function for a 
+# common loop pattern: create a container output, apply f() to each component of
+# a list, and fill the container with the results. All other for loop functionals
+# are variations of this theme: they simply use different types of input or 
+# output.
+
+### Looping patterns --------------------------------------------------------
+# It's useful to remember that there are three basic ways to loop over a vector:
+ # 1. loop over the elements: for (x in s)
+ # 2. loop over the numeric indices: for (i in seq_along(xs))
+ # 3. loop over the names: for (nm in names(xs))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
