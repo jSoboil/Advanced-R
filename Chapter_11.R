@@ -45,11 +45,31 @@ lapply2 <- function(x, f, ...) {
  # 2. loop over the numeric indices: for (i in seq_along(xs))
  # 3. loop over the names: for (nm in names(xs))
 
+# The first form is usually not a good choice for a for loop because it leads to
+# inefficient ways of saving output. It's slow because each time you extend the
+# vector, R has to copy in all of the existing elements. This is the easiest with
+# the second form:
+xs <- runif(1e3)
+res <- numeric(length(xs))
+for (i in seq_along(xs)) {
+ res[i] <- sqrt(xs[i])
+}
 
+# Just as there three basic ways to use a for loop, there are three basic ways
+# to use lapply():
+lapply(xs, function(x) {})
+lapply(seq_along(xs), function(i) {})
+lapply(names(xs), function(nm) {})
 
-
-
-
+### Exercises ---------------------------------------------------------------
+# Use both for loops and lapply() to fit linear models to the mtcars using the
+# formulas stored in this list:
+formulas <- list(
+ mpg ~ disp,
+ mpg ~ I(1 / disp),
+ mpg ~ disp + wt,
+ mpg ~ I(1 / disp)+ wt
+)
 
 
 
