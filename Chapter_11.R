@@ -68,8 +68,29 @@ formulas <- list(
  mpg ~ disp,
  mpg ~ I(1 / disp),
  mpg ~ disp + wt,
- mpg ~ I(1 / disp)+ wt
+ mpg ~ I(1 / disp) + wt
 )
+
+# Create input list:
+data_out <- as.list(numeric(length(formulas)))
+# Loop over list:
+for (i in seq_along(formulas)) {
+ data_out[[i]] <- lm(formulas[[i]], data = mtcars)
+
+ print(data_out) 
+}
+# lapply:
+lapply(formulas, lm, data = mtcars)
+
+# For loop functionals: friends of lapply() -------------------------------
+
+
+
+
+
+
+
+
 
 
 
