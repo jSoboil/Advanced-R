@@ -82,18 +82,114 @@ for (i in seq_along(formulas)) {
 # lapply:
 lapply(formulas, lm, data = mtcars)
 
-# For loop functionals: friends of lapply() -------------------------------
+## For loop functionals: friends of lapply() -------------------------------
+# The key to using functionals in place of for loops is recognising that common
+# looping patterns are already implemented in existing base functionals. Once
+# you've mastered base functionals, the next step is to write your own: if you're
+# duplicating the same looping patterns in many places, you should extract it
+# out into its own.
 
+### Vector output: sapply() and vapply() ------------------------------------
+# sapply and vapply simplify their output to be an atomic vector. vapply() is 
+# better suited for use within other functions, than sapply(). For example, 
+# when given an empty list, sapply() returns another empty list instead of the
+# more correct zero-length vector.
+sapply(mtcars, is.numeric)
+vapply(mtcars, is.numeric, logical(1))
+sapply(list(), is.numeric)
+vapply(list(), is.numeric, logical(1))
+# ... so, if the function returns results of different types or lengths, sapply()
+# will silently return a list, while vapply() will throw an error. Hence, sapply
+# is dangerous when writing functions.
 
+### Multiple inputs: map (and mapply) ---------------------------------------
+# Briefly, Map is useful when you want to use a function with two inputs. For
+# example, weighted mean(). Map() is equivalent to mapply() but with simplify = 
+# FALSE; mapply can add more complication for little gain.
 
+### Rolling computations ----------------------------------------------------
+# You can create your own functionals too. For example, if you were interested 
+# in smoothing your data using a rolling (or running) mean function:
+roll_mean <- function(x, n) {
+ out <- rep(NA, length(x))
+ 
+ offset <- trunc(n/ 2)
+ 
+ for (i in (offset + 1):(length(x) - n + offset - 1)) {
+  out[i] <- mean(x[(i - offset):(i + offset - 1)])
+ }
+ 
+ out
+}
+# Create simulated data:
+x <- seq(1, 3, length = 1e2) + runif(1e2)
+plot(x)
+lines(roll_mean(x, 5), col = "blue", lwd = 2)
+lines(roll_mean(x, 10), col = "red", lwd = 2)
 
+# In this case, if the noise was more variable (i.e. it has a longer tail), you
+# might worry that the rolling mean was too sensitive to outliers. Instead, you
+# might want to compute a rolling median:
+x <- seq(1, 3, length = 1e2) + rt(1e2, df = 2) / 3
+plot(x)
+lines(roll_mean(x, 5), col = "red", lwd = 2)
 
+# To change roll_mean to roll_median, all you need to do is replace mean with 
+# median inside loop. Instead of copy/paste, we could extract the idea of 
+# computing a rolling summary into its own function:
+roll_apply <- function(x, n, f, ...) {
+ # Create out vector
+ out <- rep(NA, length(x))
+ # Offset
+ offset <- trunc(n / 2)
+ # Loop over data:
+ for (i in (offset + 1):(length(x) - n + offset + 1)) {
+  out[i] <- f(x[(i - offset):(i + offset)], ...)
+ }
+ # Print:
+ out
+}
+plot(x)
+lines(roll_apply(x, 5, median), col = "red", lwd = 2)
 
+### Parallelosation ---------------------------------------------------------
+# Since we can compute each element in any order, it is easy to dispatch the 
+# tasks to different cores, and compute them in parallel. This is what
+# parallel::mcapply and parallel:map do.
+library(parallel)
+unlist(mclapply(1:10, sqrt, mc.cores = 4))
 
+# Important note: in this case, mclapply is actually *slower* than lapply. This
+# is because the cost of individual computations is low, and additional work is
+# needed to send the computation to different cores and collect results.
 
+# If we use a different example, however, by taking bootstrap replicates of a
+# linear model, the advantages are clear:
+boot_df <- function(x) {
+ x[sample(nrow(x), replace = TRUE), ]
 
+ }
 
+r_sqrd <- function(mod) {
+ summary(mod)$r.square
+ 
+}
 
+boot_lm <- function(i) {
+ r_sqrd(lm(mpg ~ wt + disp, data = boot_df(mtcars)))
+
+ }
+
+# Without parallelisation:
+system.time(lapply(1:500, boot_lm))
+# With parallelosation:
+system.time(mclapply(1:500, boot_lm, mc.cores = 2))
+
+# Note: increasing the number of cores will not always lead to linear gains,
+# switching from lapply or Map to its parallel forms can dramatically improve
+# computational performance!
+
+## Exercises ---------------------------------------------------------------
 
 
 
