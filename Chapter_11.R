@@ -206,6 +206,15 @@ if (vapply(mtcars, is.numeric, FUN.VALUE = logical(1))) {
 # Exercises are interesting but relatively easy - moving on...
 
 ## Manipulating matrices and data frames -----------------------------------
+# This section will cover three categories of data structure functionals:
+
+# apply(), sweep(), outer(), and how they work with matrices
+# tapply() summarises a vector by groups defined by another vector
+# the plyr::package, which generalises tapply() to make it easy to work with 
+# data frames, lists, or arrays as inputs, and data frames, lists, or arrays as
+# outputs.
+
+### Matrix and array operations ---------------------------------------------
 
 
 
