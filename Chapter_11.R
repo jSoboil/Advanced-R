@@ -189,7 +189,23 @@ system.time(mclapply(1:500, boot_lm, mc.cores = 2))
 # switching from lapply or Map to its parallel forms can dramatically improve
 # computational performance!
 
-## Exercises ---------------------------------------------------------------
+## Exercises 11.2.5 ----------------------------------------------------------
+# 1.
+## a)
+df_1 <- data.frame(
+ x = sample(x = 1:10, size = 100, replace = TRUE),
+ y = rt(n = 100, df = 2),
+ z = rbeta(n = 100, shape1 = 0.5, shape2 = 0.5)
+ )
+vapply(df_1, sd, FUN.VALUE = numeric(1))
+
+## b)
+if (vapply(mtcars, is.numeric, FUN.VALUE = logical(1))) {
+ vapply(mtcars, sd, FUN.VALUE = numeric(1))
+ }
+# Exercises are interesting but relatively easy - moving on...
+
+## Manipulating matrices and data frames -----------------------------------
 
 
 
