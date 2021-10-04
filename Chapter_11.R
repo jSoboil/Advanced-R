@@ -231,7 +231,44 @@ apply(X = a, MARGIN = 1, FUN = mean)
 apply(X = a, MARGIN = 2, FUN = mean)
 
 # There are a few caveats to apply(). It doesn't simplify argument, so you can 
-# never be completely sure what type of output you'll get.
+# never be completely sure what type of output you'll get. This means that 
+# apply() is *not* safe to use inside a function unless you carefully check the
+# inputs. apply() is also not idempotent in the sense that if the summary 
+# function is the identity operator, the output is not always the same as the 
+# input:
+a_1 <- apply(a, 1, identity)
+identical(a, a_1)
+# But if you transpose rows to columns:
+identical(a, t(a_1))
+# But again...
+a_2 <- apply(a, 2, identity)
+identical(a, a_2)
+
+# Tip: you can put n-dimensional arrays back in the right order using aperm(), 
+# or use plyr::aaply(), which is idempotent.
+
+# Another functional is sweep(), which allows you to "sweep" out the values of
+# a summary statistic. It is often used with apply() to standardise arrays. The
+# following example scales the rows of a matrix so that values lie between 0
+# and 1:
+x <- matrix(rnorm(
+ n = 20, mean = 0, sd = 1), nrow = 4)
+x_1 <- sweep(x = x, MARGIN = 1, apply(X = x, MARGIN = 1, min), `-`)
+x_2 <- sweep(x = x_1, MARGIN = 1, apply(X = x_1, MARGIN = 1, max), `/`)
+
+# The final matrix functional is outer(). It is a little different in that it 
+# takes multiple vector inputs and creates and creates a matrix or array output
+# where the input function is run over every combination of the inputs, for 
+# example...
+# Create a times table:
+outer(X = 1:3, Y = 1:10, "*")
+
+## Group apply -------------------------------------------------------------
+
+
+
+
+
 
 
 
