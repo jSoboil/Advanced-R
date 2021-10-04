@@ -215,11 +215,23 @@ if (vapply(mtcars, is.numeric, FUN.VALUE = logical(1))) {
 # outputs.
 
 ### Matrix and array operations ---------------------------------------------
+# First off, apply() is a variant of sapply() that works with matrices and 
+# arrays. It can be thought of as an operation that summarises a matrix or array
+# by collapsing each row or column to a single number. It has four arguments:
 
+# x, the matrix or array to summarise
+# MARGIN, an integer vector giving the dimensions to summarise over: 1 = rows, 2
+#  = columns, etc.
+# FUN, a summary function
+# ..., other arguments passed to FUN
 
+# A typical example of apply() looks like this:
+a <- matrix(1:20, nrow = 5)
+apply(X = a, MARGIN = 1, FUN = mean)
+apply(X = a, MARGIN = 2, FUN = mean)
 
-
-
+# There are a few caveats to apply(). It doesn't simplify argument, so you can 
+# never be completely sure what type of output you'll get.
 
 
 
