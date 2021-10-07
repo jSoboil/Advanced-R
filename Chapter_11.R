@@ -253,8 +253,8 @@ identical(a, a_2)
 # and 1:
 x <- matrix(rnorm(
  n = 20, mean = 0, sd = 1), nrow = 4)
-x_1 <- sweep(x = x, MARGIN = 1, apply(X = x, MARGIN = 1, min), `-`)
-x_2 <- sweep(x = x_1, MARGIN = 1, apply(X = x_1, MARGIN = 1, max), `/`)
+x_1 <- sweep(x = x, MARGIN = 1, apply(X = x, MARGIN = 1, min), FUN = `-`)
+x_2 <- sweep(x = x_1, MARGIN = 1, apply(X = x_1, MARGIN = 1, max), FUN = `/`)
 
 # The final matrix functional is outer(). It is a little different in that it 
 # takes multiple vector inputs and creates and creates a matrix or array output
@@ -264,15 +264,24 @@ x_2 <- sweep(x = x_1, MARGIN = 1, apply(X = x_1, MARGIN = 1, max), `/`)
 outer(X = 1:3, Y = 1:10, "*")
 
 ## Group apply -------------------------------------------------------------
+# You can think about tapply() as a generalisation to apply() that allows for
+# "ragged" arrays, arrays where each row can have a different number of columns.
+# This is often needed when you're trying to summarise a data set. E.g., imagine
+# you collected pulse rate data from a trial, and you want to comapre the two
+# groups:
+pulse <- round(
+ rnorm(n = 22, mean = 70, sd = 10/3)) + rep(c(0, 5), c(10, 12))
+group <- rep(c("A", "B"), c(10, 12))
+# Use tapply():
+tapply(pulse, group, length)
+tapply(pulse, group, mean)
 
+# tapply() by creating a "ragged" data structure from a set of inputs, and then
+# applying the function to the x_i of j.
 
+# Note: you can use split(group, pulse) to create a list too!
 
-
-
-
-
-
-
+## Manipulating lists ------------------------------------------------------
 
 
 
