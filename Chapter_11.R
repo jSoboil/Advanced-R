@@ -152,7 +152,7 @@ roll_apply <- function(x, n, f, ...) {
 plot(x)
 lines(roll_apply(x, 5, median), col = "red", lwd = 2)
 
-### Parallelosation ---------------------------------------------------------
+### Parallelisation ---------------------------------------------------------
 # Since we can compute each element in any order, it is easy to dispatch the 
 # tasks to different cores, and compute them in parallel. This is what
 # parallel::mcapply and parallel:map do.
@@ -282,6 +282,48 @@ tapply(pulse, group, mean)
 # Note: you can use split(group, pulse) to create a list too!
 
 ## Manipulating lists ------------------------------------------------------
+# Another way of thinking about functionals is as a set of general tools for 
+# altering, subsetting, and collapsing lists. Every functional programming 
+# language has three tools for this: Map(), Reduce(), and Filter(). We've seen
+# Map(). Reduce() extends two-argument functions, and Filter(), a member of an
+# important class of functionals that work with predicates (functions that retun
+# binary logic).
+
+### Reduce() ----------------------------------------------------------------
+# Reduce() reduces a single vector x to a single value i by recursively calling
+# a function f, two arguments at a time. It combines the first two elements with
+# f, then combines the result of that call with the third element, and so on.
+# Calling Reduce(f, 1:3) is equivalent to f(f(1, 2), 3). Reduce is also known as
+# fold because it folds together adjacent elements in the list.
+
+# The following two examples show what Reduce() does with an infix and prefix
+# function:
+Reduce(f =`+`, x = 1:3) # -> ((1+2) + 3)
+Reduce(f = sum, x = 1:3) # -> sum(sum(1, 2), 3)
+
+### Predicate functionals ---------------------------------------------------
+# A predicate functional returns a single binary logic, for example is.character, 
+# all, or is.NULL. There are three useful predicate functionals in base R:
+# Filter(), Find(), and Position()
+
+# Note: is.na returns a logical vector the same length as the input, rather than
+# a single binary logic statement. Hence, it is not a 'true' predicate 
+# functional.
+
+# Exercise: use Filter() and vapply() to create a function that applies a 
+# summary statistic to every numeric column in a data frame
+df <- data.frame(x = rnorm(n = 10, mean = 0, sd = 10/3), 
+                 y = letters[1:10])
+# Done:
+vapply(Filter(is.numeric, df),  mean, FUN.VALUE = 1)
+
+### Mathematical functionals ------------------------------------------------
+
+
+
+
+
+
 
 
 
