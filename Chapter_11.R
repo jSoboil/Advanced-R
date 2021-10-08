@@ -318,12 +318,74 @@ df <- data.frame(x = rnorm(n = 10, mean = 0, sd = 10/3),
 vapply(Filter(is.numeric, df),  mean, FUN.VALUE = 1)
 
 ### Mathematical functionals ------------------------------------------------
+# Functionals are very common in mathematics. The limit, maximum, the roots, and
+# the definite integral are all functionals: given a function, return a single 
+# number (or vector of numbers). At first, these functionals don't seem to fit 
+# in with the theme of elimnating loops, but if you dig deeper you'll find out
+# that they are implemented using an algorithm that involves interation. 
+# Examples are:
+# intergrate() finds the AUC defined by some function f()
+# uniroot() finds the root of some function f()
+# optimise() finds the location of highest (or lowest) value of some function
+# of f()
 
+# Below explores how these functions operate using a simple function, sin():
+integrate(f = sin, lower = 0, upper = pi)
+str(uniroot(f = sin, interval = pi * c(1 / 2, 3 / 2)))
+str(optimise(f = sin, interval = c(0, 2 * pi)))
+str(optimise(f = sin, interval = c(0, 2 * pi), maximum = TRUE))
 
+# In statistics, optimisation is often used for maximum likelihood estimation 
+# (MLE). In MLE, we have two sets of parameters: the data, which is fixed for a
+# given problem, and the parameters, which vary as we try to find the most 
+# likely parameter value for the data. These two sets of parameters make the 
+# problem well-suited for closures. Combining closures with optimisation give 
+# rise to the following approach to solving MLE problems.
 
+# The following shows how we might find the MLE estimate for /delta, if our data
+# come from a dpois. First we create a function factory that, given a dataset,
+# returns a function that computes the negative likelihood (NLL) for parameter
+# \lambda. In R, it's common to work with the negative since optimise defaults
+# to finding the min.
+poisson_NLL <- function(x) {
+ n <- length(x)
+ sum_x <- sum(x)
+ function(lambda) {
+  n * lambda - sum_x * log(lambda) # + terms not involving lambda
+ }
+}
+# Now optimise allows us to compute the most likely values:
+x_1 <- c(41, 30, 31, 38, 29, 24, 30, 29, 31, 38)
+x_2 <- c(6, 4, 7, 3, 3, 7, 5, 2, 2, 7, 5, 4, 12, 6, 9)
+NLL_1 <- poisson_NLL(x_1)
+NLL_2 <- poisson_NLL(x_2)
+optimise(NLL_1, interval = c(0, 100))$minimum # so, for parameter interval 0-100
+optimise(NLL_2, interval = c(0, 100))$minimum # so, for parameter interval 0-100
 
+## Exercises 11.5.1 --------------------------------------------------------
+# Implement arg_max. It should take a function and a vector of inputs, and 
+# return the elements of the input where the function returns the highest value.
+# For example, arg_max(-10:5, function(x) x ^ 2) should return -10
 
+# arg_max function:
+arg_max <- function(f, x) {
+ round(x = optimise(f, interval = x, maximum = TRUE)$maximum, digits = 0)
+}
+# Create some function
+some_func <- function(x) {
+ x ^ 2
+}
 
+# Test:
+arg_max(f = some_func, x = c(-10:5))
+
+# arg_min function:
+arg_min <- function(f, x) {
+ round(x = optimise(f, interval = x)$minimum, digits = 0)
+}
+arg_min(f = some_func, x = c(1:5))
+
+## Loops that should be left as is -----------------------------------------
 
 
 
