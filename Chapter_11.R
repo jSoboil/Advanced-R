@@ -375,17 +375,44 @@ arg_max <- function(f, x) {
 some_func <- function(x) {
  x ^ 2
 }
-
 # Test:
 arg_max(f = some_func, x = c(-10:5))
-
 # arg_min function:
 arg_min <- function(f, x) {
  round(x = optimise(f, interval = x)$minimum, digits = 0)
 }
+# Test:
 arg_min(f = some_func, x = c(1:5))
 
 ## Loops that should be left as is -----------------------------------------
+# Some loops have no natural functional equivalent. There are three common cases:
+#  modifying in place
+#  recursive functions
+#  while loops
+
+# It's possible to torture these problems to use a functional, but it's not a
+# good idea. It will lead to code that is harder to understand, eliminating the
+# main reason for using functionals in the first case.
+
+### Modifying in place ------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
