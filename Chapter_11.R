@@ -395,10 +395,26 @@ arg_min(f = some_func, x = c(1:5))
 # main reason for using functionals in the first case.
 
 ### Modifying in place ------------------------------------------------------
+# If you need to modify a part of an existing data frame, it is often better to
+# to use a for loop. For example, the following code performs a variable-by-
+# variable transformation by matching the names of a list of functions to the
+# names of the variables in the data frame:
+trans <- list(
+ disp = function(x) x * 0.0163871,
+ am = function(x) factor(x, levels = c("auto", "manual"))
+)
+for (var in names(trans)) {
+ mtcars[[var]] <- trans[[var]](mtcars[[var]])
+}
 
+# We wouldn't normally use lapply() to replace this loop directly, but it is 
+# *possible*. Just replace the loop with lapply() by using <<-:
+lapply(names(trans), function(var) {
+ mtcars[[var]] <<- trans[[var]](mtcars[[var]])
+})
+# The point is is that it is much less readable.
 
-
-
+### Recursive relationships -------------------------------------------------
 
 
 
