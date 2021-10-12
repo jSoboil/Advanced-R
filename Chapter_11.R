@@ -415,10 +415,24 @@ lapply(names(trans), function(var) {
 # The point is is that it is much less readable.
 
 ### Recursive relationships -------------------------------------------------
-
-
-
-
+# It's hard to convert a for loop into a functional when the relationship 
+# between elements is not independent, or is defined recursively. For example,
+# exponential smoothing works by taking a weighted average of the current and
+# previous data points. The exps() function below implements exponential 
+# smoothing with a for loop.
+exps <- function(x, alpha) {
+ s <- numeric(length(x) + 1)
+ for (i in seq_along(s)) {
+  if (i == 1) {
+   s[i] <- x[i]
+  } else {
+   s[i] <- alpha * x[i - 1] + (1 - alpha) * s[i - 1]
+  }
+ }
+ s
+}
+x <- runif(6)
+exps(x, 0.5)
 
 
 
