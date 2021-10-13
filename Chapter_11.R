@@ -425,14 +425,139 @@ exps <- function(x, alpha) {
  for (i in seq_along(s)) {
   if (i == 1) {
    s[i] <- x[i]
-  } else {
-   s[i] <- alpha * x[i - 1] + (1 - alpha) * s[i - 1]
+   } else {
+    s[i] <- alpha * x[i - 1] + (1 - alpha) * s[i - 1]
+   }
   }
- }
  s
-}
+ }
 x <- runif(6)
 exps(x, 0.5)
+
+# We cannot eliminate the above loop since none of the functionals we've
+# encountered allow the output at position i to depend on both the input and 
+# output at position i - 1. It is possible to solve, but challenging, more time
+# consuming, and harder to read as code.
+ 
+### While loops -------------------------------------------------------------
+# Note that you can write every for loop and as a while loop but you cannot do
+# the reverse. For example, we could turn this for loop:
+for (i in 1:10) {
+ print(i)
+}
+# ... into this while loop:
+i <- 1
+while (i <= 10) {
+ print(i)
+ i <- i + 1
+}
+# But, not every while loop can be turned into a for loop because many while 
+# loops don't know in advance how many times they will be run:
+i <- 0
+while (TRUE) {
+ if (runif(1) > 0.9) {
+  break
+  i <- i + 1
+ }
+}
+
+# This is a common problem when writing simulations!
+
+# However, in this case we can remove the loop by recognising a special feature
+# of this problem. This is a Bernoulli trial with p = 0.1 of failure. This is a
+# geometric random variable, so you can replace the code with i <- geom(1, 0.1).
+# Reformulating the problem in this way is often hard to do in general, but you
+# will benefit greatly if you can do it for your problem.
+
+## A family of functions ---------------------------------------------------
+# This section uses a case study to demonstrate how to use functionals to take
+# a simple building block and make it powerful and general. Let's start with a 
+# simple idea: adding two numbers together. We can then use functionals to 
+# extend it to summing multiple numbers, computing parrallel and cumulative sums,
+# and summing across array dimensions.
+
+# We can start by defining a very simple adding function, one which takes two
+# scalar arguments:
+add <- function(x, y) {
+ stopifnot(length(x) == 1, length(y) == 1, 
+           is.numeric(x), is.numeric(y))
+ x + y
+}
+# We can also add an na.rm argument. A helper function will make the function 
+# easier to work with: if x is missing it should return y and vice versa, and if
+# both x and y are missing then the function should return another argument to
+# the function - identity.
+rm_na <- function(x, y, identity) {
+ if (is.na(x) && is.na(y)) {
+  identity
+ } else if (is.na(x)) {
+  y
+ } else {
+  x
+ }
+}
+# This allows you to write a version of add() that can deal with missing values 
+# if needed:
+add <- function(x, y, na.rm = FALSE) {
+ if (na.rm && (is.na(x) || is.na(y))) {
+  rm_na(x, y, 0)
+ } else {
+  x + y
+ }
+}
+add(10, NA)
+add(10, NA, na.rm = TRUE)
+add(NA, NA)
+add(NA, NA, na.rm = TRUE)
+# Note: remember adding is associative, hence NA + NA = 0
+ 
+# Now that we have the basic workings, we can extend the function to deal with
+# more complicated inputs. One obvious generalisation is to add more than two
+# numbers. We can do this by iteratively adding numbers: if the input is 
+# c(1, 2, 3) we compute add(add(1, 2), 3). This is a simple application of
+# Reduce():
+r_add <- function(xs, na.rm = TRUE) {
+ Reduce(function(x, y) add(x, y, na.rm = na.rm), xs)
+}
+r_add(c(1, 4, 10)) 
+# This looks good, but we need to test a few special cases:
+r_add(NA, na.rm = TRUE)
+r_add(numeric())
+# Both outputs are incorrect. In the first case, we get a missing value even 
+# though we've explicitly asked the function to ignore them. In the second, we
+# get a NULL instead of a length on numeric vector.
+
+# These problems are related. If we give Reduce() a length one vector, it doesn't
+# have anything to reduce, so it just returns the input. If we give it an input
+# of length zero, it always returns the NULL. The easiest way to fix this 
+# problem is to use the init argument of Reduce(). This is added at the start of
+# every input vector:
+r_add <- function(xs, na.rm = TRUE) {
+ Reduce(function(x, y) add(x, y, na.rm = na.rm), xs, init = 0)
+}
+r_add(c(1, 4, 10))
+r_add(NA, na.rm = TRUE)
+r_add(numeric())
+# Note: r_add() is equivalent to sum()
+
+# It could also be helpful to have a vectorised version of add() so that we can
+# perform the addition of two vectors of numbers in element-wise fashion. We 
+# could use Map() or vapply() to implement this, but neither is perfect. Map()
+# returns a list, instead of a numeric vector, so we need to use 
+# simplify2array(). vapply() returns a vector but it requires us to use a loop 
+# over a set of indices.
+v_add1 <- function(x, y, na.rm = FALSE) {
+ stopifnot(length(x) == length(y), is.numeric(x), is.numeric(y))
+ if (length(y) == 0) {
+  return(numeric())
+ }
+ simplify2array(
+  Map(function(x, y) add(x, y, na.rm = na.rm), x, y)
+ )
+}
+
+
+
 
 
 
