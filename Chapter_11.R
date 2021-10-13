@@ -555,22 +555,40 @@ v_add1 <- function(x, y, na.rm = FALSE) {
   Map(function(x, y) add(x, y, na.rm = na.rm), x, y)
  )
 }
+v_add2 <- function(x, y, na.rm = FALSE) {
+ stopifnot(length(x) == length(y), is.numeric(x), is.numeric(y))
+ vapply(seq_along(x), function(i) add(x[i], y[i], na.rm = na.rm),
+ numeric(1))
+}
+# Test cases:
+v_add1(1:10, 1:10)
+v_add1(numeric(), numeric())
+v_add1(c(1, NA), c(1, NA))
+v_add1(c(1, NA), c(1, NA), na.rm = TRUE)
 
+# Another variant of add() is the cumulative sum. We can implement it with Reduce
+# by setting the accumulate argument to TRUE:
+c_add <- function(xs, na.rm = TRUE) {
+ Reduce(function(x, y) add(x, y, na.rm = na.rm), xs,
+        accumulate = TRUE)
+}
+c_add(1:10)
+c_add(10:1)
+# Note: this is equivalent to cumsum()
 
+# Finally, we might want to define addition for more complicated data structures
+# like matrices. We could create row and col variants that sum across rows and
+# columns, respectively, or whole arrays. These are easily implemented as 
+# combinations of add() and apply():
+row_sum <- function(x, na.rm = FALSE) {
+ apply(x, 1,, add, na.rm = na.rm)
+}
+col_sum <- function(x, na.rm = FALSE) {
+ apply(x, 2, add, na.rm = na.rm)
+}
+arr_sum <- function(x, dim, na.rm = FALSE) {
+ apply(x, dim, add, na.rm = na.rm)
+}
+# Note: the first two functions are equivalant to rowSums() and colSums()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# End file ----------------------------------------------------------------
