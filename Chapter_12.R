@@ -77,12 +77,39 @@ x <- lapply(1:100, runif)
 x <- lapply(1:100, dot_every(10, runif))
 # Notice that the function is the last argument in each FO. 
 
-### Memoisation -------------------------------------------------------------
 
+### Capturing function invocations ------------------------------------------
+# One challenge with functionals is that it can be hard to see what's going on
+# inside of them. Fortunately, we can use FOs to peer behind the curtain with 
+# tee().
 
+# tee() has three arguments, all functions: f, the function to modify; on_input(),
+# a function that's called with the inputs to f; and on_output, a function that's
+# called with the output from f.
+ignore <- function(...) NULL
+tee <- function(f, on_input = ignore, on_output = ignore) {
+ function (...) {
+  on_input(...)
+  on_output(...)
+  output <- f(...)
+  on_output(output)
+  output
+ }
+}
 
+# We can use tee() to look inside the uniroot() functional and see how it 
+# iterates its way to a solution. The following example finds where x and cos(x)
+# intercept:
+g <- function(x) cos(x) - x
+zero <- uniroot(g, c(-5, 5))
+show_x <- function(x, ...) cat(sprintf("%+.08f", x), "\n")
+# The location where the function is evaluated:
+uniroot(tee(g, on_input = show_x), c(-5, 5))
+# The value of the function:
+uniroot(tee(g, on_output = show_x), c(-5, 5))
 
-
-
-
-
+# cat() allows us to see what's happening as the function runs, but it doesn't
+# give use a way to work with the values after the function has completed. To do
+# that we could capture the sequence of call by creating a function - remember()
+# - that records every argument called and retrieves them when coerced into a 
+# list. 
