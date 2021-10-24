@@ -103,7 +103,7 @@ tee <- function(f, on_input = ignore, on_output = ignore) {
 g <- function(x) cos(x) - x
 zero <- uniroot(g, c(-5, 5))
 show_x <- function(x, ...) cat(sprintf("%+.08f", x), "\n")
-# The location where the function is evaluated:
+# The location where the function is evaluatgited:
 uniroot(tee(g, on_input = show_x), c(-5, 5))
 # The value of the function:
 uniroot(tee(g, on_output = show_x), c(-5, 5))
@@ -112,4 +112,32 @@ uniroot(tee(g, on_output = show_x), c(-5, 5))
 # give use a way to work with the values after the function has completed. To do
 # that we could capture the sequence of call by creating a function - remember()
 # - that records every argument called and retrieves them when coerced into a 
-# list. 
+# list.
+remember <- function() {
+ memory <- list()
+ f <- function (...) {
+  # This is inefficient!
+  memory <<- append(memory, list(...))
+  invisible()
+ }
+ 
+ structure(f, class = "remember")
+}
+as.list.remember <- function(x, ...) {
+ environment(x)$memory
+}
+print.remember <- function(x, ...) {
+ cat("Remembering...\n")
+ str(as.list(x))
+}
+
+# Now we can draw a picture showing how uniroot zeroes in on the final answer:
+locs <- remember()
+vals <- remember()
+zero <- uniroot(tee(g, locs, vals), c(-5, 5))
+x <- unlist(as.list(locs))
+error <- unlist(as.list(vals))
+plot(x, type = "b"); abline(h = 0.739, col = "grey50")
+plot(error, type = "b"); abline(h = 0, col = "grey50")
+
+# End file ----------------------------------------------------------------
