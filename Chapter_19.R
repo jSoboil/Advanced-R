@@ -154,3 +154,81 @@ cppFunction('NumericVector pdistC(double x, NumericVector ys) {
 # 2. C++ uses pow(), not ^, for exponentiation.
 
 ### Matrix input,  vector output --------------------------------------------
+# Each vector type in C++ also has a matrix equivalent: NumericMatrix, 
+# IntegerMatrix, CharacterMatrix, and LogicalMatrix. Using them is 
+# straightfoward. For example, we could create a function that reproduces
+# rowSums():
+cppFunction('NumericVector rowSumsC(NumericMatrix x) {
+             int nrow = x.nrow(), ncol = x.ncol();
+             NumericVector out(nrow);
+            
+             for (int i = 0; i < nrow; i++) {
+              double total = 0;
+             for (int j = 0; j < ncol; j++) {
+              total += x(i, j);
+             }
+           out[i] = total;
+           }
+          return out;
+    }')
+set.seed(1014)
+x <- matrix(sample(100), 10)
+rowSumsC(x)
+
+# ... the main differences are that:
+
+# 1. In C++, you subset a matricx with (), not [].
+
+# 2. You use .nrow() and .ncol() methods to get the dim of the matrix.
+
+### Using source C++ --------------------------------------------------------
+# Despite the ease use of the cppFunction(), for most real-world problems it is
+# easier to use stand-alone C++ files and then source them into R using 
+# sourceCpp(). This let's you take advantage of the text editor support for C++
+# files (e.g. syntax highlighting) and it also makes it easier to identify the
+# line numbers in compilation errors.
+
+# Stand-alone C++ files should have the .cpp extension and need to start with:
+# <Rcpp.h>
+# using namespace Rcpp;
+
+# Also, for each function you want to make available in R, you need to prefix it
+# with:
+# // [[Rcpp::export]]
+
+# Note: the space is mandatory!
+
+# You can also embed R code in special C++ comment blocks, which is convenient
+# when you want to run some test code:
+# /*** R
+# This is R code
+# */
+
+# Then, to compile the C++ code, use sourceCpp("path/to/file/file.cpp").
+sourceCpp("C++/Example_1.cpp")
+
+### Exercises ---------------------------------------------------------------
+# Exercise 1:
+# f1 = mean()
+# f2 = cumsum()
+# f3 = any()
+# f4 = Position()
+# f5 = pmin()
+
+
+# Exercise 2: convert the following functions into C++
+# all()
+sourceCpp("C++/allC_func.cpp")
+x_true <- rep(x = TRUE, length = 100)
+allC(x_true)
+x_false <- c(x_true[-1], FALSE)
+allC(x_false)
+
+# cumprod()
+
+
+# cummin(), cummax()
+
+
+
+
