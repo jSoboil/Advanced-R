@@ -209,25 +209,72 @@ sourceCpp("C++/Example_1.cpp")
 
 ### Exercises ---------------------------------------------------------------
 # Exercise 1:
-# f1 = mean()
-# f2 = cumsum()
-# f3 = any()
-# f4 = Position()
-# f5 = pmin()
+## f1 = mean()
+## f2 = cumsum()
+## f3 = any()
+## f4 = Position()
+## f5 = pmin()
 
 
 # Exercise 2: convert the following functions into C++
 # all()
 sourceCpp("C++/allC_func.cpp")
 x_true <- rep(x = TRUE, length = 100)
+## C++ version:
 allC(x_true)
 x_false <- c(x_true[-1], FALSE)
 allC(x_false)
+## R version:
+all(x_true)
 
+# Get sample data:
+x <- sample(1:100, size = 100, replace = TRUE)
 # cumprod()
+sourceCpp("C++/cumprod_func.cpp")
+## C++ version:
+cumprodC(x = x)
+## R version:
+cumprod(x)
+
+# cummin()
+sourceCpp("C++/cummin_func.cpp")
+## C++ version:
+cumminC(x)
+## R version:
+cummin(x = x)
+
+# cummax()
+sourceCpp("C++/cummax_func.cpp")
+## C++ version:
+cummaxC(x)
+## R version:
+cummax(x)
+
+# Exercise 3: convert diff() into C++ (start by assuming lag 1, and then 
+# generalise by assuming lag n)
 
 
-# cummin(), cummax()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
