@@ -225,6 +225,7 @@ x_false <- c(x_true[-1], FALSE)
 allC(x_false)
 ## R version:
 all(x_true)
+all(x_false)
 
 # Get sample data:
 x <- sample(1:100, size = 100, replace = TRUE)
@@ -267,19 +268,18 @@ diffC(x = x, lag = 1000)
 diff(x = x, lag = 2)
 diff(x = x, lag = 1000)
 
-# Exercise 4: convert diff() into C++
+# Exercise 4: convert range() into C++
+sourceCpp("C++/range_func.cpp")
+## C++ version:
+rangeC(x = x)
+## R version:
+range(x)
 
+# Exercise 5: convert var() into C++
+sourceCpp("C++/var_func.cpp")
+## C++ version:
+varC(x)
+## R version:
+var(x)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Attributes and other classes --------------------------------------------
