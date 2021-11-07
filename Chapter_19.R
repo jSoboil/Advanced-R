@@ -207,14 +207,13 @@ rowSumsC(x)
 # Then, to compile the C++ code, use sourceCpp("path/to/file/file.cpp").
 sourceCpp("C++/Example_1.cpp")
 
-### Exercises ---------------------------------------------------------------
+### Exercises 19.1.7 --------------------------------------------------------
 # Exercise 1:
 ## f1 = mean()
 ## f2 = cumsum()
 ## f3 = any()
 ## f4 = Position()
 ## f5 = pmin()
-
 
 # Exercise 2: convert the following functions into C++
 # all()
@@ -252,18 +251,23 @@ cummax(x)
 
 # Exercise 3: convert diff() into C++ (start by assuming lag 1, and then 
 # generalise by assuming lag n)
+## C++ diff() version with lag 1:
+sourceCpp("C++/diff_lagOne_func.cpp")
+## C++ version:
+diffC(x)
+## R version:
+diff(x)
 
+## C++ diff() version with lag n:
+sourceCpp("C++/diff_lagN_func.cpp")
+## C++ version:
+diffC(x = x, lag = 2)
+diffC(x = x, lag = 1000)
+## R version:
+diff(x = x, lag = 2)
+diff(x = x, lag = 1000)
 
-
-
-
-
-
-
-
-
-
-
+# Exercise 4: convert diff() into C++
 
 
 
