@@ -1,4 +1,6 @@
 # High performance functions with Rcpp ------------------------------------
+# This chapter covers writing and calling C++ code in R for improved computing
+# performance
 
 ## Getting started with C++ ------------------------------------------------
 # The cppFunction() allows you to write C++ functions in R:
@@ -207,13 +209,14 @@ rowSumsC(x)
 # Then, to compile the C++ code, use sourceCpp("path/to/file/file.cpp").
 sourceCpp("C++/Example_1.cpp")
 
-### Exercises 19.1.7 --------------------------------------------------------
+### Exercises ---------------------------------------------------------------
 # Exercise 1:
 ## f1 = mean()
 ## f2 = cumsum()
 ## f3 = any()
 ## f4 = Position()
 ## f5 = pmin()
+
 
 # Exercise 2: convert the following functions into C++
 # all()
@@ -225,7 +228,6 @@ x_false <- c(x_true[-1], FALSE)
 allC(x_false)
 ## R version:
 all(x_true)
-all(x_false)
 
 # Get sample data:
 x <- sample(1:100, size = 100, replace = TRUE)
@@ -263,19 +265,17 @@ diff(x)
 sourceCpp("C++/diff_lagN_func.cpp")
 ## C++ version:
 diffC(x = x, lag = 2)
-diffC(x = x, lag = 1000)
 ## R version:
 diff(x = x, lag = 2)
-diff(x = x, lag = 1000)
 
-# Exercise 4: convert range() into C++
+# Exercise 4: convert range() to C++:
 sourceCpp("C++/range_func.cpp")
 ## C++ version:
-rangeC(x = x)
+rangeC(x)
 ## R version:
 range(x)
 
-# Exercise 5: convert var() into C++
+# Exercise 5: convert var() to C++:
 sourceCpp("C++/var_func.cpp")
 ## C++ version:
 varC(x)
@@ -283,3 +283,20 @@ varC(x)
 var(x)
 
 ## Attributes and other classes --------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
