@@ -283,6 +283,19 @@ varC(x)
 var(x)
 
 ## Attributes and other classes --------------------------------------------
+# All R objects have attributes, which can be queried and modified with .attr().
+# Rcpp also provides .names() as an alias for the name attribute. The C++ source 
+# code below illustrates these methods. Note the use of ::create(), a *class*
+# method. This allows you to create an R vector from C++ scalar values:
+sourceCpp("C++/create_func_example.cpp")
+attribs()
+
+# Note that for S4 objects, .slot() plays a similar role to .attr().
+
+### Lists and data frames ---------------------------------------------------
+
+
+
 
 
 
