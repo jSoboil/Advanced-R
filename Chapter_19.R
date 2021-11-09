@@ -217,7 +217,6 @@ sourceCpp("C++/Example_1.cpp")
 ## f4 = Position()
 ## f5 = pmin()
 
-
 # Exercise 2: convert the following functions into C++
 # all()
 sourceCpp("C++/allC_func.cpp")
@@ -293,23 +292,20 @@ attribs()
 # Note that for S4 objects, .slot() plays a similar role to .attr().
 
 ### Lists and data frames ---------------------------------------------------
+# Rcpp also provides class List and DataFrame, but they are more useful for 
+# output than input. This is because lists and data frames can contain arbitrary
+# classes but C++ needs to know their classes in advance. If the list has known
+# structure (e.g., it's an S3 object), you can extract the components and 
+# manually convert them to their C++ equivalents with as as(). For example, the
+# object created by lm(), the function that fits a linear model, is a list whose
+# components are always of the same type. The following code illustrates how you
+# might extract the mean percentage error (mpr()) from a linear model. This isn't
+# a good example, since it is easily implemented in R without much computing 
+# cost, but it shows how to work with an important S3 object. In the source code,
+# note the use of .inherits() and stop() to check that the object is a linear 
+# model.
+sourceCpp("C++/mpe_func.cpp")
+mod <- lm(mpg ~ wt, data = mtcars)
+round(mpe(mod), digits = 4)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Missing Values ----------------------------------------------------------
