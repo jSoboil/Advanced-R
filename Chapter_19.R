@@ -309,3 +309,79 @@ mod <- lm(mpg ~ wt, data = mtcars)
 round(mpe(mod), digits = 4)
 
 ## Missing Values ----------------------------------------------------------
+# If you're working with missing values, it is important to know two things:
+
+# 1. how R's missing values behave in C++'s Scalars (e.g. double)
+# 2. how to get and set missing values in vectors (e.g. NumericVector)
+
+### Scalars -----------------------------------------------------------------
+# The following source code explores what happens when you take one of R's 
+# missing values, coerce it into a scalar, and then coerce it back to an R
+# vector.
+sourceCpp("C++/scalar_ex.cpp")
+str(scalar_missings())
+# ... with the exception of the bool, things look okay. However, it is not as 
+# straightforward as it seems, as shown in the section below.
+
+#### Integers ----------------------------------------------------------------
+# With integers, missing values are stored as the smallest integer. But, since 
+# C++ doesn't know that the smallest integer has this special behaviour, if you
+# do anything to it you're likely to get an incorrect value. For example:
+evalCpp('NA_INTEGER + 1')
+
+# Hence, if you want to work with missing values in integers, either use a length
+# one IntegerVector or be **very** careful with your code.
+
+#### Doubles -----------------------------------------------------------------
+# With doubles, one may be able to get away with missing values and working with
+# NaNs. This is because R's NA is a special type of IEEE 754 floating point 
+# number NaN. So, any logical expression that involves a NaN (or in C++, NAN)
+# always evaluates as FALSE:
+evalCpp("NAN == 1")
+evalCpp("NAN < 1")
+evalCpp("NAN > 1")
+evalCpp("NAN == NAN")
+
+# However, it is important to be careful when combining this with boolean values:
+evalCpp("NAN & TRUE")
+evalCpp("NAN || TRUE")
+
+# But in numeric contexts, NaNs will propagate NAs:
+evalCpp("NAN + 1")
+evalCpp("NAN - 1")
+evalCpp("NAN * 1")
+evalCpp("NAN / 1")
+
+#### Strings -----------------------------------------------------------------
+# String is a scalar string class introduced by Rcpp, so it knows how to deal 
+# with missing values.
+
+#### Boolean -----------------------------------------------------------------
+# While C++'s bool has two possible values (true, false), a logical vector in R
+# has three (TRUE, FALSE, and NA). If you coerce a length 1 logical vector, make
+# sure it doesn't contain missing values otherwise they will be converted to 
+# TRUE!
+
+#### Vectors -----------------------------------------------------------------
+# With vectors, one has to use a missing value specific to the type of vector, 
+# NA_REAL, NA_INTEGER, NA_LOGICAL, NA_STRING.
+
+# To check if a value in a vector is missing, use the class method ::is_na():
+sourceCpp("C++/is_na_ex.cpp")
+is_naC(c(NA, 5.4, 3.2, NA))
+
+# Another alternative is the sugar function is_na(), which takes a vector and 
+# returns a logical vector.
+
+## Exercises ---------------------------------------------------------------
+# Rewrite any one of the previous functions to deal with missing values. If 
+# na.rm is true, ignore the missing values. If na.rm is false, return a missing
+# value if the input contains any missing values.
+sourceCpp("C++/na_rangefunc.cpp")
+# Sample data:
+x <- sample(c(1:100, NA), size = 1000, replace = TRUE)
+# Test:
+## Ignore NAs:
+na_rangeC(x = x)
+## Test for NAs:
+na_rangeC(x = x, na_rm = TRUE)
