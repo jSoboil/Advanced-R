@@ -374,14 +374,56 @@ is_naC(c(NA, 5.4, 3.2, NA))
 # returns a logical vector.
 
 ## Exercises ---------------------------------------------------------------
-# Rewrite any one of the previous functions to deal with missing values. If 
+# 1. Rewrite any one of the previous functions to deal with missing values. If 
 # na.rm is true, ignore the missing values. If na.rm is false, return a missing
 # value if the input contains any missing values.
 sourceCpp("C++/na_rangefunc.cpp")
-# Sample data:
+## Sample data:
 x <- sample(c(1:100, NA), size = 1000, replace = TRUE)
-# Test:
-## Ignore NAs:
+## Test:
+### Ignore NAs:
 na_rangeC(x = x)
-## Test for NAs:
+### Test for NAs:
 na_rangeC(x = x, na_rm = TRUE)
+
+# 2. Rewrite cumsum() and diff() so they can handle missing values.
+## diff():
+sourceCpp("C++/na_diff_func.cpp")
+### Sample data:
+x <- sample(c(1:50, NA), size = 200, replace = TRUE)
+### Test;
+diffC(x = x, lag = 1, na_rm = TRUE)
+diff(x)
+
+## cumsum():
+sourceCpp("C++/na_cumsum.cpp")
+### Test:
+cumsumC(x = x, na_rm = TRUE)
+cumsum(x)
+
+## Rcpp Sugar --------------------------------------------------------------
+# Rcpp provides a lot of syntactic 'sugar' to ensure that C++ functions work 
+# very similarly to their R equivalents. In fact, Rcpp sugar makes it possible 
+# to write efficient C++ code that looks almost identical to its R equivalent.
+# If there is a sugar version of the function, you should use it. Sugar 
+# functions can be roughly broken down into:
+
+# arithmetic and logical operators
+# logical summary functions
+# vector views
+# other useful functions
+
+### Arithmetic and logical operators ----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
