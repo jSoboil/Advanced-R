@@ -413,17 +413,4 @@ cumsum(x)
 # vector views
 # other useful functions
 
-### Arithmetic and logical operators ----------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
+# End file ----------------------------------------------------------------
